@@ -2,9 +2,8 @@ import axios from "axios";
 
 const obtenerToken = async () => {
   const body = {
-    username: "carlos",
-    password: "123456",
-    email: "carlos@email.com",
+    username: "dave",
+    password: "123456789",
   };
 
   const respuesta = await axios.post(
@@ -12,7 +11,10 @@ const obtenerToken = async () => {
     body
   );
 
-  return respuesta.data.accessToken; // 👈 SOLO el token
+  const token = String(
+    respuesta.data.accessToken ?? respuesta.data.access_token ?? ""
+  ).trim();
+  return token; // 👈 SOLO el token
 };
 
 export async function obtenerTokenFacade() {
