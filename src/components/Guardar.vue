@@ -39,7 +39,7 @@
 
 <script>
 import { guardarFacade } from "../clients/matricula.js";
-import { obtenerTokenFacade } from "../clients/oauth.js";
+import { authService } from "../services/authService.js";
 
 export default {
   data() {
@@ -51,7 +51,6 @@ export default {
       provincia: "",
       resultado: null,
       error: null,
-      token: null,
     };
   },
   methods: {
@@ -64,17 +63,22 @@ export default {
         return;
       }
 
-      const body = {
-        nombre: this.nombre,
-        apellido: this.apellido,
-        fechaNacimiento: this.fechaNacimiento + ":00",
-        genero: this.genero,
-        provincia: this.provincia,
-        links: []
-      };
+      try {
+        const body = {
+          nombre: this.nombre,
+          apellido: this.apellido,
+          fechaNacimiento: this.fechaNacimiento + ":00",
+          genero: this.genero,
+          provincia: this.provincia,
+          links: []
+        };
 
-      const res = await guardarFacade(body, this.token);
-      this.resultado = res;
+        const res = await guardarFacade(body);
+        this.resultado = res;
+      } catch (err) {
+        console.error("Error al guardar:", err);
+        this.error = "Error al guardar el estudiante";
+      }
     },
     formatearFecha(fecha) {
       if (!fecha) return '';
@@ -88,9 +92,8 @@ export default {
       });
     }
   },
-  async mounted() {
-    this.token = await obtenerTokenFacade();
-    console.log("Token obtenido:", this.token);
+  mounted() {
+    console.log("Usuario autenticado:", authService.obtenerUsuario());
   },
 };
 </script>

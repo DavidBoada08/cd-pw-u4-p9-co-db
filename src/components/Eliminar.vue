@@ -22,14 +22,14 @@
 
 <script>
 import { borrarFacade } from "../clients/matricula.js";
-import { obtenerTokenFacade } from "../clients/oauth.js";
+import { authService } from "../services/authService.js";
+
 export default {
   data() {
     return {
       id: null,
       exito: false,
       error: null,
-      token: null
     };
   },
   methods: {
@@ -37,17 +37,22 @@ export default {
       this.exito = false;
       this.error = null;
 
+      if (!this.id) {
+        this.error = "Por favor ingresa un ID";
+        return;
+      }
+
       try {
-        await borrarFacade(this.id, this.token);
+        await borrarFacade(this.id);
         this.exito = true;
       } catch (err) {
+        console.error("Error al eliminar:", err);
         this.error = err.response?.data?.message || err.message || "Error al eliminar el estudiante";
       }
     }
   },
-  async mounted() {
-    this.token = await obtenerTokenFacade();
-    console.log("Token obtenido:", this.token);
+  mounted() {
+    console.log("Usuario autenticado:", authService.obtenerUsuario());
   }
 };
 </script>

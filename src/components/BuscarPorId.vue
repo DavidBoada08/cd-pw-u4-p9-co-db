@@ -33,20 +33,23 @@
 
 <script>
 import { obtenerEstudiantePorIdFacade } from "../clients/matricula.js";
-import { obtenerTokenFacade } from "../clients/oauth.js";
+import { authService } from "../services/authService.js";
 
 export default {
   data() {
     return {
       id: null,
       estudiante: null,
-      token: null
     };
   },
   methods: {
     async obtenerPorId() {
-      const res = await obtenerEstudiantePorIdFacade(this.id, this.token);
-      this.estudiante = res;
+      try {
+        const res = await obtenerEstudiantePorIdFacade(this.id);
+        this.estudiante = res;
+      } catch (error) {
+        console.error("Error al obtener estudiante:", error);
+      }
     },
     formatearFecha(fecha) {
       if (!fecha) return '';
@@ -60,9 +63,8 @@ export default {
       });
     }
   },
-  async mounted() {
-    this.token = await obtenerTokenFacade();
-    console.log("Token obtenido:", this.token);
+  mounted() {
+    console.log("Usuario autenticado:", authService.obtenerUsuario());
   },
 };
 </script>

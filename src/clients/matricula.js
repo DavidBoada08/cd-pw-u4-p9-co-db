@@ -1,12 +1,10 @@
 import axios from "axios";
 
-const consultarTodos = async (token) => {
+const consultarTodos = async () => {
   const respuesta = axios
     .get("http://localhost:8081/matricula/api/v1.0/estudiantes", {
       headers: {
         "Content-Type": "application/json",
-        Authorization:
-          `Bearer ${token}`,
       },
     })
     .then((respuesta) => respuesta.data);
@@ -14,13 +12,11 @@ const consultarTodos = async (token) => {
   return respuesta;
 };
 
-const consultarPorId = async (id, token) => {
+const consultarPorId = async (id) => {
   const respuesta = await axios
     .get(`http://localhost:8081/matricula/api/v1.0/estudiantes/${id}`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization:
-          `Bearer ${token}`,
       },
     })
     .then((respuesta) => respuesta.data);
@@ -28,13 +24,11 @@ const consultarPorId = async (id, token) => {
   return respuesta;
 };
 
-const actualizar = async (id, body, token) => {
+const actualizar = async (id, body) => {
   const r = await axios
     .put(`http://localhost:8081/matricula/api/v1.0/estudiantes/${id}`, body, {
       headers: {
         "Content-Type": "application/json",
-        Authorization:
-          `Bearer ${token}`,
       },
     })
     .then((r) => r.data);
@@ -42,28 +36,24 @@ const actualizar = async (id, body, token) => {
   return r;
 };
 
-const guardar = async (body, token) => {
+const guardar = async (body) => {
   const r = await axios.post(
     "http://localhost:8081/matricula/api/v1.0/estudiantes",
     body,
     {
       headers: {
         "Content-Type": "application/json",
-        Authorization:
-          `Bearer ${token}`,
       },
     },
   );
   return r.data;
 };
 
-const actualizarParcial = async (id, body, token) => {
+const actualizarParcial = async (id, body) => {
   const r = axios
     .patch(`http://localhost:8081/matricula/api/v1.0/estudiantes/${id}`, body, {
       headers: {
         "Content-Type": "application/json",
-        Authorization:
-          `Bearer ${token}`,
       },
     })
     .then((r) => r.data);
@@ -71,38 +61,36 @@ const actualizarParcial = async (id, body, token) => {
   return r;
 };
 
-const borrar = async (id, token) => {
+const borrar = async (id) => {
   axios
     .delete(`http://localhost:8081/matricula/api/v1.0/estudiantes/${id}`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization:
-          `Bearer ${token}`,
       },
     })
     .then((r) => r.data);
 };
 
-export async function obtenerEstudiantesFacade(token) {
-  return await consultarTodos(token);
+export async function obtenerEstudiantesFacade() {
+  return await consultarTodos();
 }
 
-export async function obtenerEstudiantePorIdFacade(id, token) {
-  return await consultarPorId(id, token);
+export async function obtenerEstudiantePorIdFacade(id) {
+  return await consultarPorId(id);
 }
 
-export async function guardarFacade(body, token) {
-  return await guardar(body, token);
+export async function guardarFacade(body) {
+  return await guardar(body);
 }
 
-export async function actualizarFacade(id, body, token) {
-  return await actualizar(id, body, token);
+export async function actualizarFacade(id, body) {
+  return await actualizar(id, body);
 }
 
-export async function actualizarParcialFacade(id, body, token) {
-  return await actualizarParcial(id, body, token);
+export async function actualizarParcialFacade(id, body) {
+  return await actualizarParcial(id, body);
 }
 
-export async function borrarFacade(id, token) {
-  return await borrar(id, token);
+export async function borrarFacade(id) {
+  return await borrar(id);
 }

@@ -37,7 +37,7 @@
 
 <script>
 import { actualizarParcialFacade } from "../clients/matricula.js";
-import { obtenerTokenFacade } from "../clients/oauth.js";
+import { authService } from "../services/authService.js";
 
 export default {
   data() {
@@ -46,19 +46,26 @@ export default {
       nombre: "",
       apellido: "",
       resultado: null,
-      token: null
     };
   },
   methods: {
     async actualizarParcial() {
-      const body = {};
+      try {
+        const body = {};
 
-      // Solo enviamos lo que tenga valor
-      if (this.nombre) body.nombre = this.nombre;
-      if (this.apellido) body.apellido = this.apellido;
+        if (this.nombre) body.nombre = this.nombre;
+        if (this.apellido) body.apellido = this.apellido;
 
-      const res = await actualizarParcialFacade(this.id, body, this.token);
-      this.resultado = res;
+        if (Object.keys(body).length === 0) {
+          alert("Por favor completa al menos un campo");
+          return;
+        }
+
+        const res = await actualizarParcialFacade(this.id, body);
+        this.resultado = res;
+      } catch (error) {
+        console.error("Error al actualizar parcialmente:", error);
+      }
     },
     formatearFecha(fecha) {
       if (!fecha) return '';
@@ -72,9 +79,8 @@ export default {
       });
     }
   },
-  async mounted() {
-    this.token = await obtenerTokenFacade();
-    console.log("Token obtenido:", this.token);
+  mounted() {
+    console.log("Usuario autenticado:", authService.obtenerUsuario());
   }
 };
 </script>

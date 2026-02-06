@@ -38,27 +38,27 @@
 
 <script>
 import { obtenerEstudiantesFacade } from "../clients/matricula.js";
-import { obtenerTokenFacade } from "../clients/oauth.js";
+import { authService } from "../services/authService.js";
 
 export default {
   data() {
     return {
       estudiantes: [],
       yaConsulto: false,
-      token: null,
     };
   },
 
   methods: {
     async obtenerTodos() {
-      if (!this.token) {
-        console.error("Token no disponible");
-        return;
+      try {
+        const res = await obtenerEstudiantesFacade();
+        this.estudiantes = Array.isArray(res) ? res : [];
+        this.yaConsulto = true;
+      } catch (error) {
+        console.error("Error al obtener estudiantes:", error);
+        this.estudiantes = [];
+        this.yaConsulto = true;
       }
-
-      const res = await obtenerEstudiantesFacade(this.token);
-      this.estudiantes = Array.isArray(res) ? res : [];
-      this.yaConsulto = true;
     },
     formatearFecha(fecha) {
       if (!fecha) return '';
@@ -72,9 +72,8 @@ export default {
       });
     }
   },
-  async mounted() {
-    this.token = await obtenerTokenFacade();
-    console.log("Token obtenido:", this.token);
+  mounted() {
+    console.log("Usuario autenticado:", authService.obtenerUsuario());
   },
 };
 </script>

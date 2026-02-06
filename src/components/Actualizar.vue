@@ -42,7 +42,7 @@
 
 <script>
 import { actualizarFacade } from "../clients/matricula.js";
-import { obtenerTokenFacade } from "../clients/oauth.js";
+import { authService } from "../services/authService.js";
 
 export default {
   data() {
@@ -54,23 +54,26 @@ export default {
       genero: "",
       provincia: "",
       resultado: null,
-      token: null
     };
   },
   methods: {
     async actualizar() {
-      const body = {
-        id: this.id,
-        nombre: this.nombre,
-        apellido: this.apellido,
-        fechaNacimiento: this.fechaNacimiento,
-        genero: this.genero,
-        provincia: this.provincia,
-        links: []
-      };
+      try {
+        const body = {
+          id: this.id,
+          nombre: this.nombre,
+          apellido: this.apellido,
+          fechaNacimiento: this.fechaNacimiento,
+          genero: this.genero,
+          provincia: this.provincia,
+          links: []
+        };
 
-      const res = await actualizarFacade(this.id, body, this.token);
-      this.resultado = res;
+        const res = await actualizarFacade(this.id, body);
+        this.resultado = res;
+      } catch (error) {
+        console.error("Error al actualizar:", error);
+      }
     },
     formatearFecha(fecha) {
       if (!fecha) return '';
@@ -84,9 +87,8 @@ export default {
       });
     }
   },
-  async mounted() {
-    this.token = await obtenerTokenFacade();
-    console.log("Token obtenido:", this.token);
+  mounted() {
+    console.log("Usuario autenticado:", authService.obtenerUsuario());
   }
 };
 </script>
